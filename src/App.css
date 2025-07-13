@@ -258,8 +258,88 @@
   line-height: 1.5;
 }
 
+.try-it-btn {
+  background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  width: auto;
+}
+
+.try-it-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(46, 125, 50, 0.3);
+  background: linear-gradient(135deg, #1B5E20 0%, #0D4A14 100%);
+}
+
+.chevron-icon {
+  width: 18px;
+  height: 18px;
+  transition: transform 0.3s ease;
+}
+
 .activity-details {
   margin-bottom: 16px;
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.activity-details.expanded {
+  opacity: 1;
+  max-height: 1000px;
+  margin-bottom: 16px;
+}
+
+.activity-copy-section {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid #e1e5e9;
+  text-align: center;
+}
+
+.copy-activity-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  font-style: italic;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.copy-activity-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+  background: linear-gradient(135deg, #5a6fd8 0%, #6a4c93 100%);
+}
+
+.copy-activity-btn.copied {
+  background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
+  transform: scale(1.02);
+  box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
+}
+
+.copy-activity-btn.copied:hover {
+  background: linear-gradient(135deg, #1B5E20 0%, #0D4A14 100%);
+  transform: scale(1.02) translateY(-2px);
+  box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
 }
 
 .detail-section {
@@ -326,5 +406,15 @@
   
   .copy-btn {
     align-self: center;
+  }
+  
+  .try-it-btn {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .copy-activity-btn {
+    width: 100%;
+    justify-content: center;
   }
 } 

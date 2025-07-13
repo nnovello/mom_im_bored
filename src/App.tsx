@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Send, Sparkles, Users, Clock, Heart, MapPin, Copy } from 'lucide-react';
+import { Send, Sparkles, Users, Clock, Heart, MapPin, Copy, ChevronDown, ChevronUp } from 'lucide-react';
 import './App.css';
 import { initGA, trackPageView, trackFormSubmission, trackCopyToClipboard } from './services/analytics';
 
@@ -23,6 +23,8 @@ const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [copyFeedback, setCopyFeedback] = useState<string>('');
   const [isError, setIsError] = useState<boolean>(false);
+  const [expandedActivities, setExpandedActivities] = useState<Set<number>>(new Set());
+  const [copiedActivities, setCopiedActivities] = useState<Set<number>>(new Set());
 
   // Initialize Google Analytics on component mount
   useEffect(() => {
@@ -103,13 +105,10 @@ const App: React.FC = () => {
     clearResponse();
   };
 
-  const copyToClipboard = async () => {
-    if (activities.length === 0) return;
-    
+  const copyActivityToClipboard = async (activity: ChatGPTActivity, index: number) => {
     try {
-      const activitiesText = activities.map((activity, index) => {
-        const letter = String.fromCharCode(65 + index); // A, B, C, D, E
-        return `${letter}. ${activity.title}
+      const letter = String.fromCharCode(65 + index); // A, B, C, D, E
+      const activityText = `${letter}. ${activity.title}
 Description: ${activity.description}
 Instructions: ${activity.instructions}
 Tips: ${activity.tips}
@@ -117,11 +116,20 @@ Age Range: ${activity.ageRange}
 Duration: ${activity.duration}
 Category: ${activity.category}
 Things to Avoid: ${activity.thingsToAvoid}`;
-      }).join('\n\n');
       
-      await navigator.clipboard.writeText(activitiesText);
-      setCopyFeedback('Copied!');
-      setTimeout(() => setCopyFeedback(''), 2000);
+      await navigator.clipboard.writeText(activityText);
+      
+      // Mark this activity as copied
+      setCopiedActivities(prev => new Set(Array.from(prev).concat(index)));
+      
+      // Reset the copied state after 3 seconds
+      setTimeout(() => {
+        setCopiedActivities(prev => {
+          const newSet = new Set(prev);
+          newSet.delete(index);
+          return newSet;
+        });
+      }, 3000);
       
       // Track copy to clipboard event
       trackCopyToClipboard();
@@ -130,6 +138,16 @@ Things to Avoid: ${activity.thingsToAvoid}`;
       setCopyFeedback('Failed to copy');
       setTimeout(() => setCopyFeedback(''), 2000);
     }
+  };
+
+  const toggleActivityExpansion = (index: number) => {
+    const newExpanded = new Set(expandedActivities);
+    if (newExpanded.has(index)) {
+      newExpanded.delete(index);
+    } else {
+      newExpanded.add(index);
+    }
+    setExpandedActivities(newExpanded);
   };
 
   console.log('🎨 Current activities state:', activities);
@@ -226,16 +244,6 @@ Things to Avoid: ${activity.thingsToAvoid}`;
             <div className="card">
               <div className="response-header">
                 <h2>{isError ? 'Oops!' : 'Activities to Consider'}</h2>
-                {!isError && activities.length > 0 && (
-                  <button
-                    className="btn copy-btn"
-                    onClick={copyToClipboard}
-                    title="Copy activities to clipboard"
-                  >
-                    <Copy className="copy-icon" />
-                    {copyFeedback || 'Copy'}
-                  </button>
-                )}
               </div>
               {isError && (
                 <div className="error-image">
@@ -250,20 +258,51 @@ Things to Avoid: ${activity.thingsToAvoid}`;
                     <div key={index} className="activity-card">
                       <h3>{activity.title}</h3>
                       <p className="activity-description">{activity.description}</p>
-                      <div className="activity-details">
-                        <div className="detail-section">
-                          <strong>Instructions:</strong>
-                          <p className="detail-text">{activity.instructions}</p>
+                      
+                      <button
+                        className="btn try-it-btn"
+                        onClick={() => toggleActivityExpansion(index)}
+                      >
+                        {expandedActivities.has(index) ? (
+                          <>
+                            <ChevronUp className="chevron-icon" />
+                            Hide Details
+                          </>
+                        ) : (
+                          <>
+                            <ChevronDown className="chevron-icon" />
+                            Try it out!
+                          </>
+                        )}
+                      </button>
+
+                      {expandedActivities.has(index) && (
+                        <div className="activity-details expanded">
+                          <div className="detail-section">
+                            <strong>Instructions:</strong>
+                            <p className="detail-text">{activity.instructions}</p>
+                          </div>
+                          <div className="detail-section">
+                            <strong>Tips:</strong>
+                            <p className="detail-text">{activity.tips}</p>
+                          </div>
+                          <div className="detail-section">
+                            <strong>Things to Avoid:</strong>
+                            <p className="detail-text">{activity.thingsToAvoid}</p>
+                          </div>
+                          <div className="activity-copy-section">
+                            <button
+                              className={`btn copy-activity-btn ${copiedActivities.has(index) ? 'copied' : ''}`}
+                              onClick={() => copyActivityToClipboard(activity, index)}
+                              title="Copy this activity to clipboard"
+                            >
+                              <Copy className="copy-icon" />
+                              {copiedActivities.has(index) ? 'copied!' : 'copy to clipboard'}
+                            </button>
+                          </div>
                         </div>
-                        <div className="detail-section">
-                          <strong>Tips:</strong>
-                          <p className="detail-text">{activity.tips}</p>
-                        </div>
-                        <div className="detail-section">
-                          <strong>Things to Avoid:</strong>
-                          <p className="detail-text">{activity.thingsToAvoid}</p>
-                        </div>
-                      </div>
+                      )}
+                      
                       <div className="activity-meta">
                         <span className="meta-item">
                           <Clock className="meta-icon" />
