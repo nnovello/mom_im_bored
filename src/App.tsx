@@ -214,10 +214,10 @@ Things to Avoid: ${activity.thingsToAvoid}`;
               </label>
               <textarea
                 className="input textarea"
-                placeholder="Tell us about your kid... For example: 'My 5-year-old is bored at a restaurant and keeps asking for the tablet. He is fascinated by dinosaurs.' or 'I need activities for my 8-year-old at the grocery store. She wants to be a musician when she grows up.'"
+                placeholder="Tell us about your kid... For example: 'My 5-year-old is bored at a restaurant and keeps asking for the tablet. He is fascinated by dinosaurs.' OR 'I need activities for my 8-year-old at the grocery store. She wants to be a musician when she grows up.'"
                 value={situation}
                 onChange={handleSituationChange}
-                rows={5}
+                rows={6}
               />
             </div>
 
