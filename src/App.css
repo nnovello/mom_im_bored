@@ -1,0 +1,330 @@
+.App {
+  min-height: 100vh;
+}
+
+.header {
+  text-align: center;
+  padding: 40px 0;
+  color: white;
+}
+
+.header-content {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.logo-image {
+  width: 480px;
+  height: 480px;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.logo-image:hover {
+  transform: scale(1.1);
+}
+
+.logo-icon {
+  width: 32px;
+  height: 32px;
+  color: #ffd700;
+}
+
+.logo h1 {
+  font-size: 2.5rem;
+  font-weight: 400;
+  font-family: 'Architects Daughter', cursive;
+  margin: 0;
+  background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 0.5px;
+}
+
+.subtitle {
+  font-size: 1.2rem;
+  opacity: 0.9;
+  margin: 0;
+  font-weight: 300;
+}
+
+.main-content {
+  margin-bottom: 40px;
+}
+
+.card h2 {
+  color: #333;
+  margin-bottom: 16px;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.response-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.response-header h2 {
+  margin: 0;
+}
+
+.copy-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #667eea;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.copy-btn:hover {
+  background: #5a6fd8;
+}
+
+.copy-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.error-image {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.error-image img {
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.error-image img:hover {
+  transform: scale(1.05);
+}
+
+.card-description {
+  color: #666;
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+
+.form-section {
+  margin-bottom: 24px;
+}
+
+.form-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 12px;
+  font-size: 1rem;
+}
+
+.label-icon {
+  width: 18px;
+  height: 18px;
+  color: #667eea;
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 16px;
+  font-size: 18px;
+  font-weight: 600;
+  margin-top: 16px;
+}
+
+.secondary-btn {
+  background: white;
+  color: #667eea;
+  border: 2px solid #667eea;
+  padding: 8px 16px;
+  font-size: 14px;
+}
+
+.secondary-btn:hover {
+  background: #667eea;
+  color: white;
+}
+
+.suggestions-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.suggestions-header h2 {
+  margin: 0;
+}
+
+.suggestion-meta {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: #666;
+  background: #f8f9fa;
+  padding: 4px 8px;
+  border-radius: 12px;
+}
+
+.meta-icon {
+  width: 12px;
+  height: 12px;
+}
+
+.category {
+  background: #e3f2fd;
+  color: #1976d2;
+  font-weight: 500;
+}
+
+.footer {
+  text-align: center;
+  color: white;
+  padding: 40px 0;
+  opacity: 0.8;
+}
+
+.footer p {
+  margin: 8px 0;
+}
+
+.footer-note {
+  font-size: 0.9rem;
+  opacity: 0.7;
+  max-width: 600px;
+  margin: 16px auto 0;
+  line-height: 1.5;
+}
+
+.chatgpt-activities {
+  display: grid;
+  gap: 20px;
+}
+
+.activity-card {
+  background: white;
+  border: 1px solid #e1e5e9;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.activity-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.activity-card h3 {
+  color: #333;
+  margin: 0 0 12px 0;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.activity-description {
+  color: #666;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+.activity-details {
+  margin-bottom: 16px;
+}
+
+.detail-section {
+  margin-bottom: 12px;
+}
+
+.detail-section strong {
+  color: #333;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.detail-text {
+  color: #555;
+  line-height: 1.5;
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.activity-meta {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+  .header {
+    padding: 30px 0;
+  }
+  
+  .logo h1 {
+    font-size: 2rem;
+  }
+  
+  .logo-image {
+    width: 360px;
+    height: 360px;
+  }
+  
+  .subtitle {
+    font-size: 1rem;
+  }
+  
+  .suggestions-header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+  }
+  
+  .suggestions-header h2 {
+    text-align: center;
+  }
+  
+  .response-header {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+  
+  .response-header h2 {
+    text-align: center;
+  }
+  
+  .copy-btn {
+    align-self: center;
+  }
+} 
