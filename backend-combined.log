@@ -97,3 +97,8 @@
   "temperature": 0.7
 }
 2025-07-20T23:32:30.160Z [ERROR]: Caller IP: ::1 | User Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 | Status: 500 | OpenAI API key not configured on server.
+2025-07-20T23:34:32.291Z [INFO]: Server running on port 3001
+2025-07-20T23:34:38.191Z [INFO]: --- Incoming GET /health ---
+2025-07-20T23:34:38.191Z [INFO]: Endpoint: /health
+2025-07-20T23:34:38.191Z [INFO]: Headers:
+2025-07-20T23:34:38.192Z [INFO]: Body:
