@@ -35,7 +35,7 @@ const BACKEND_API_URL = '/api/chatgpt';
 // console.log('API Key starts with sk-:', OPENAI_API_KEY ? OPENAI_API_KEY.startsWith('sk-') : false);
 
 export const getActivityAdvice = async (request: ChatGPTRequest): Promise<ChatGPTResponse> => {
-  console.log('🚀 getActivityAdvice called with:', request);
+  // console.log('🚀 getActivityAdvice called with:', request);
   
   // Remove API key check
   // if (!OPENAI_API_KEY) {
@@ -112,22 +112,22 @@ The JSON structure should be:
 
 Provide ONLY this JSON object with exactly 5 activities. No additional text, explanations, or markdown formatting.`;
 
-    console.log('📤 Making API request to backend...');
-    console.log('Request payload:', {
-      model: 'gpt-3.5-turbo',
-      messages: [
-        {
-          role: 'system',
-          content: 'You are a helpful parenting expert who specializes in screen-free activities for kids. Always consider the specific age, location/place, and situation provided by the user when giving advice. Provide practical, personalized recommendations that are tailored to the exact circumstances described. Use "kid" and "kids" terminology instead of "child" and "children".'
-        },
-        {
-          role: 'user',
-          content: prompt
-        }
-      ],
-      max_tokens: 1000,
-      temperature: 0.7
-    });
+    // console.log('📤 Making API request to backend...');
+    // console.log('Request payload:', {
+    //   model: 'gpt-3.5-turbo',
+    //   messages: [
+    //     {
+    //       role: 'system',
+    //       content: 'You are a helpful parenting expert who specializes in screen-free activities for kids. Always consider the specific age, location/place, and situation provided by the user when giving advice. Provide practical, personalized recommendations that are tailored to the exact circumstances described. Use "kid" and "kids" terminology instead of "child" and "children".'
+    //     },
+    //     {
+    //       role: 'user',
+    //       content: prompt
+    //     }
+    //   ],
+    //   max_tokens: 1000,
+    //   temperature: 0.7
+    // });
 
     // Call backend instead of OpenAI directly
     const response = await axios.post(
@@ -149,14 +149,15 @@ Provide ONLY this JSON object with exactly 5 activities. No additional text, exp
       }
     );
 
-    console.log('✅ API call successful!');
+    // Log only the HTTP status code from the response
+    console.log('HTTP response code:', response.status);
     const advice = response.data.choices ? response.data.choices[0].message.content : response.data.advice;
-    console.log('📄 Raw ChatGPT response:', advice);
-    console.log('📄 Response length:', advice.length);
-    console.log('📄 First 500 characters:', advice.substring(0, 500));
+    // console.log('📄 Raw ChatGPT response:', advice);
+    // console.log('📄 Response length:', advice.length);
+    // console.log('📄 First 500 characters:', advice.substring(0, 500));
     
     const extractedActivities = extractActivities(advice);
-    console.log('🎯 Extracted activities:', extractedActivities);
+    // console.log('🎯 Extracted activities:', extractedActivities);
     
     return {
       advice,
@@ -175,7 +176,7 @@ Provide ONLY this JSON object with exactly 5 activities. No additional text, exp
 };
 
 const extractActivities = (advice: string): Activity[] => {
-  console.log('🔍 Starting activity extraction from:', advice.substring(0, 200) + '...');
+  // console.log('🔍 Starting activity extraction from:', advice.substring(0, 200) + '...');
   const activities: Activity[] = [];
   
   // Strategy 1: Try to parse as JSON first
@@ -184,14 +185,14 @@ const extractActivities = (advice: string): Activity[] => {
     const jsonMatch = advice.match(/\{[\s\S]*\}/);
     if (jsonMatch) {
       const jsonStr = jsonMatch[0];
-      console.log('📋 Found JSON in response, attempting to parse...');
+      // console.log('📋 Found JSON in response, attempting to parse...');
       const parsed = JSON.parse(jsonStr);
       
       // Check if the parsed object has activities as direct properties (A, B, C, D, E)
       const activityKeys = Object.keys(parsed).filter(key => /^[A-E]$/.test(key));
       
       if (activityKeys.length > 0) {
-        console.log('📋 Successfully parsed JSON with direct activity keys:', activityKeys);
+        // console.log('📋 Successfully parsed JSON with direct activity keys:', activityKeys);
         
         activityKeys.forEach((activityKey) => {
           const activityData = parsed[activityKey];
@@ -208,7 +209,7 @@ const extractActivities = (advice: string): Activity[] => {
               thingsToAvoid: activityData['Things to Avoid'] || 'None specified'
             };
             
-            console.log(`✅ Extracted activity ${activityKey}:`, activity);
+            // console.log(`✅ Extracted activity ${activityKey}:`, activity);
             activities.push(activity);
           }
         });
@@ -220,7 +221,7 @@ const extractActivities = (advice: string): Activity[] => {
       
       // Fallback: Check if there's an activities array
       if (parsed.activities && Array.isArray(parsed.activities)) {
-        console.log('📋 Successfully parsed JSON with activities array');
+        // console.log('📋 Successfully parsed JSON with activities array');
         
         parsed.activities.forEach((activityObj: any, index: number) => {
           // Handle the nested structure: { "A": { ... }, "B": { ... } }
@@ -239,7 +240,7 @@ const extractActivities = (advice: string): Activity[] => {
               thingsToAvoid: activityData['Things to Avoid'] || 'None specified'
             };
             
-            console.log(`✅ Extracted activity ${activityKey}:`, activity);
+            // console.log(`✅ Extracted activity ${activityKey}:`, activity);
             activities.push(activity);
           }
         });
@@ -250,7 +251,7 @@ const extractActivities = (advice: string): Activity[] => {
       }
     }
   } catch (error) {
-    console.log('❌ JSON parsing failed, falling back to text parsing:', error);
+    // console.log('❌ JSON parsing failed, falling back to text parsing:', error);
   }
   
   // Strategy 2: Fallback to text parsing
@@ -258,25 +259,25 @@ const extractActivities = (advice: string): Activity[] => {
   
   // Split by A, B, C, D, E
   activitySections = advice.split(/(?=^[A-E]\.)/m).filter(section => section.trim());
-  console.log('📋 Strategy 2 - Found activity sections:', activitySections.length);
+  // console.log('📋 Strategy 2 - Found activity sections:', activitySections.length);
   
   // If no sections found, try alternative strategies
   if (activitySections.length <= 1) {
     // Look for numbered activities
     activitySections = advice.split(/(?=^[1-5]\.)/m).filter(section => section.trim());
-    console.log('📋 Strategy 2b - Found numbered sections:', activitySections.length);
+    // console.log('📋 Strategy 2b - Found numbered sections:', activitySections.length);
   }
   
   if (activitySections.length <= 1) {
     // Look for bullet points or dashes
     activitySections = advice.split(/(?=^[-•*]\s)/m).filter(section => section.trim());
-    console.log('📋 Strategy 2c - Found bullet sections:', activitySections.length);
+    // console.log('📋 Strategy 2c - Found bullet sections:', activitySections.length);
   }
   
   if (activitySections.length <= 1) {
     // Split by double newlines and look for activity-like content
     const paragraphs = advice.split(/\n\n+/).filter(p => p.trim());
-    console.log('📋 Strategy 2d - Found paragraphs:', paragraphs.length);
+    // console.log('📋 Strategy 2d - Found paragraphs:', paragraphs.length);
     
     // If we have 5+ paragraphs, treat them as activities
     if (paragraphs.length >= 5) {
@@ -285,7 +286,7 @@ const extractActivities = (advice: string): Activity[] => {
   }
   
   activitySections.forEach((section, index) => {
-    console.log(`🔍 Processing section ${index + 1}:`, section.substring(0, 100) + '...');
+    // console.log(`🔍 Processing section ${index + 1}:`, section.substring(0, 100) + '...');
     try {
       const lines = section.split('\n').filter(line => line.trim());
       if (lines.length === 0) return;
@@ -344,19 +345,19 @@ const extractActivities = (advice: string): Activity[] => {
           category: category || 'General',
           thingsToAvoid: thingsToAvoid || 'None specified'
         };
-        console.log('✅ Extracted activity:', activity);
+        // console.log('✅ Extracted activity:', activity);
         activities.push(activity);
       } else {
-        console.log('❌ No title found for section');
+        // console.log('❌ No title found for section');
       }
     } catch (error) {
-      console.warn('Failed to parse activity section:', error);
+      // console.warn('Failed to parse activity section:', error);
     }
   });
   
   // If we still don't have activities, create a fallback
   if (activities.length === 0) {
-    console.log('⚠️ No activities parsed, creating fallback');
+    // console.log('⚠️ No activities parsed, creating fallback');
     const fallbackActivity: Activity = {
       title: 'Activity Suggestions',
       description: 'Here are some great screen-free activities for your child:',

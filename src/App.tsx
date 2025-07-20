@@ -66,12 +66,9 @@ const App: React.FC = () => {
         situation: situation
       });
       
-      console.log('📱 App received result:', result);
       setResponse(result.advice);
       setActivities(result.activities);
-      console.log('📱 Activities state set to:', result.activities);
     } catch (error) {
-      console.error('Error getting advice:', error);
       setResponse('Bummer dude! Our surfer has wiped out. We\'re looking into it, so please try again later.');
       setIsError(true);
     } finally {
