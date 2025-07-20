@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Send, Sparkles, Users, Clock, Heart, MapPin, Copy, ChevronDown, ChevronUp } from 'lucide-react';
+import { Send, Users, Clock, Heart, MapPin, Copy, ChevronDown, ChevronUp } from 'lucide-react';
 import './App.css';
 import { initGA, trackPageView, trackFormSubmission, trackCopyToClipboard } from './services/analytics';
 
@@ -21,7 +21,6 @@ const App: React.FC = () => {
   const [response, setResponse] = useState<string>('');
   const [activities, setActivities] = useState<ChatGPTActivity[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [copyFeedback, setCopyFeedback] = useState<string>('');
   const [isError, setIsError] = useState<boolean>(false);
   const [expandedActivities, setExpandedActivities] = useState<Set<number>>(new Set());
   const [copiedActivities, setCopiedActivities] = useState<Set<number>>(new Set());
@@ -135,8 +134,10 @@ Things to Avoid: ${activity.thingsToAvoid}`;
       trackCopyToClipboard();
     } catch (error) {
       console.error('Failed to copy to clipboard:', error);
-      setCopyFeedback('Failed to copy');
-      setTimeout(() => setCopyFeedback(''), 2000);
+      // setCopyFeedback('Failed to copy'); // Removed unused variable
+      setTimeout(() => {
+        // setCopyFeedback(''); // Removed unused variable
+      }, 2000);
     }
   };
 
@@ -150,7 +151,7 @@ Things to Avoid: ${activity.thingsToAvoid}`;
     setExpandedActivities(newExpanded);
   };
 
-  console.log('🎨 Current activities state:', activities);
+  //console.log('🎨 Current activities state:', activities);
 
   return (
     <div className="App">

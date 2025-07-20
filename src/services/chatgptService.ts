@@ -23,25 +23,25 @@ interface ChatGPTResponse {
   tips: string[];
 }
 
-// Note: You'll need to add your OpenAI API key to use this service
-const OPENAI_API_KEY = process.env.REACT_APP_OPENAI_API_KEY;
-const OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions';
+// Remove OpenAI API key and URL from frontend
+// const OPENAI_API_KEY = process.env.REACT_APP_OPENAI_API_KEY;
+// const OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions';
+const BACKEND_API_URL = '/api/chatgpt';
 
-// Debug logging
-console.log('🔍 ChatGPT Service Debug Info:');
-console.log('API Key exists:', !!OPENAI_API_KEY);
-console.log('API Key length:', OPENAI_API_KEY ? OPENAI_API_KEY.length : 0);
-console.log('API Key starts with sk-:', OPENAI_API_KEY ? OPENAI_API_KEY.startsWith('sk-') : false);
+// Remove debug logging related to API key
+// console.log('🔍 ChatGPT Service Debug Info:');
+// console.log('API Key exists:', !!OPENAI_API_KEY);
+// console.log('API Key length:', OPENAI_API_KEY ? OPENAI_API_KEY.length : 0);
+// console.log('API Key starts with sk-:', OPENAI_API_KEY ? OPENAI_API_KEY.startsWith('sk-') : false);
 
 export const getActivityAdvice = async (request: ChatGPTRequest): Promise<ChatGPTResponse> => {
   console.log('🚀 getActivityAdvice called with:', request);
   
-  if (!OPENAI_API_KEY) {
-    console.log('❌ No API key found');
-    throw new Error('OpenAI API key is not configured. Please add REACT_APP_OPENAI_API_KEY to your environment variables.');
-  }
-
-  console.log('✅ API key found - attempting real API call');
+  // Remove API key check
+  // if (!OPENAI_API_KEY) {
+  //   console.log('❌ No API key found');
+  //   throw new Error('OpenAI API key is not configured. Please add REACT_APP_OPENAI_API_KEY to your environment variables.');
+  // }
 
   try {
     const ageRange = request.ageRange || 'any age';
@@ -112,7 +112,7 @@ The JSON structure should be:
 
 Provide ONLY this JSON object with exactly 5 activities. No additional text, explanations, or markdown formatting.`;
 
-    console.log('📤 Making API request to OpenAI...');
+    console.log('📤 Making API request to backend...');
     console.log('Request payload:', {
       model: 'gpt-3.5-turbo',
       messages: [
@@ -129,8 +129,9 @@ Provide ONLY this JSON object with exactly 5 activities. No additional text, exp
       temperature: 0.7
     });
 
+    // Call backend instead of OpenAI directly
     const response = await axios.post(
-      OPENAI_API_URL,
+      BACKEND_API_URL,
       {
         model: 'gpt-3.5-turbo',
         messages: [
@@ -145,17 +146,11 @@ Provide ONLY this JSON object with exactly 5 activities. No additional text, exp
         ],
         max_tokens: 1000,
         temperature: 0.7
-      },
-      {
-        headers: {
-          'Authorization': `Bearer ${OPENAI_API_KEY}`,
-          'Content-Type': 'application/json'
-        }
       }
     );
 
     console.log('✅ API call successful!');
-    const advice = response.data.choices[0].message.content;
+    const advice = response.data.choices ? response.data.choices[0].message.content : response.data.advice;
     console.log('📄 Raw ChatGPT response:', advice);
     console.log('📄 Response length:', advice.length);
     console.log('📄 First 500 characters:', advice.substring(0, 500));
@@ -169,7 +164,7 @@ Provide ONLY this JSON object with exactly 5 activities. No additional text, exp
       tips: extractTips(advice)
     };
   } catch (error: any) {
-    console.error('❌ Error calling ChatGPT API:', error);
+    console.error('❌ Error calling backend API:', error);
     if (error.response) {
       console.error('Response status:', error.response.status);
       console.error('Response data:', error.response.data);
