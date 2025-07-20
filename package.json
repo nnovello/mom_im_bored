@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "A web app that provides advice to parents on keeping kids occupied without screens",
   "private": true,
+  "type": "module",
   "dependencies": {
     "@types/node": "^18.15.0",
     "@types/react": "^18.0.28",
