@@ -18,7 +18,6 @@
     "react-dom": "^18.0.0",
     "react-ga4": "^2.1.0",
     "react-scripts": "^5.0.0",
-    "sharp": "^0.34.3",
     "typescript": "^4.9.5",
     "web-vitals": "^2.1.4",
     "express": "^4.18.2",
@@ -27,7 +26,7 @@
     "cors": "^2.8.5"
   },
   "scripts": {
-    "build": "react-scripts build",
+    "build": "CI=false react-scripts build",
     "start": "node server/index.js"
   },
   "proxy": "http://localhost:3001",
