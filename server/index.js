@@ -3,6 +3,11 @@ import express from 'express';
 import axios from 'axios';
 import cors from 'cors';
 import winston from 'winston';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 dotenv.config();
 
@@ -11,6 +16,9 @@ const PORT = process.env.PORT || 3001;
 
 app.use(cors());
 app.use(express.json());
+
+// Serve static files from the React build
+app.use(express.static(path.join(__dirname, '../build')));
 
 // Setup winston logger
 const logger = winston.createLogger({
@@ -81,6 +89,11 @@ app.post('/api/chatgpt', async (req, res) => {
       error: error.message
     });
   }
+});
+
+// Handle React routing, return all requests to React app
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../build', 'index.html'));
 });
 
 app.listen(PORT, () => {
