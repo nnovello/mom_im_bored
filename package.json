@@ -5,7 +5,7 @@
   "private": true,
   "type": "module",
   "engines": {
-    "node": ">=18.0.0",
+    "node": ">=20.0.0",
     "npm": ">=8.0.0"
   },
   "dependencies": {
@@ -17,7 +17,7 @@
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-ga4": "^2.1.0",
-    "react-scripts": "^5.0.0",
+    "react-scripts": "^5.0.1",
     "typescript": "^4.9.5",
     "web-vitals": "^2.1.4",
     "express": "^4.18.2",
@@ -26,7 +26,8 @@
     "cors": "^2.8.5"
   },
   "scripts": {
-    "build": "CI=false react-scripts build",
+    "build": "node build.js",
+    "build:fallback": "npx --yes react-scripts@5.0.1 build",
     "start": "node server/index.js"
   },
   "proxy": "http://localhost:3001",
