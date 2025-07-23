@@ -96,6 +96,46 @@ const PrivacyModal: React.FC<{ open: boolean; onClose: () => void }> = ({ open, 
   );
 };
 
+const ContactModal: React.FC<{ open: boolean; onClose: () => void }> = ({ open, onClose }) => {
+  const [content, setContent] = React.useState<string>('');
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    if (open) {
+      setLoading(true);
+      setError(null);
+      fetch('/contact.html')
+        .then((res) => {
+          if (!res.ok) throw new Error('Failed to load Contact page');
+          return res.text();
+        })
+        .then((html) => {
+          setContent(html);
+          setLoading(false);
+        })
+        .catch((err) => {
+          setError('Could not load Contact page.');
+          setLoading(false);
+        });
+    }
+  }, [open]);
+
+  if (!open) return null;
+  return (
+    <div className="about-modal-overlay">
+      <div className="about-modal-content">
+        <button onClick={onClose} aria-label="Close">×</button>
+        {loading && <div>Loading...</div>}
+        {error && <div style={{color: 'red'}}>{error}</div>}
+        {!loading && !error && (
+          <div dangerouslySetInnerHTML={{ __html: content }} />
+        )}
+      </div>
+    </div>
+  );
+};
+
 const App: React.FC = () => {
   const [selectedAge, setSelectedAge] = useState<string>('');
   const [selectedPlace, setSelectedPlace] = useState<string>('');
@@ -108,6 +148,7 @@ const App: React.FC = () => {
   const [copiedActivities, setCopiedActivities] = useState<Set<number>>(new Set());
   const [aboutOpen, setAboutOpen] = React.useState(false);
   const [privacyOpen, setPrivacyOpen] = React.useState(false);
+  const [contactOpen, setContactOpen] = React.useState(false);
 
   // Initialize Google Analytics on component mount
   useEffect(() => {
@@ -416,10 +457,12 @@ Things to Avoid: ${activity.thingsToAvoid}`;
           <div style={{ display: 'flex', gap: 12, marginTop: 8 }}>
             <button style={{ background: 'none', border: 'none', color: '#fff', opacity: 0.7, fontSize: 14, cursor: 'pointer', textDecoration: 'underline' }} onClick={() => setAboutOpen(true)} aria-label="About this site">About</button>
             <button style={{ background: 'none', border: 'none', color: '#fff', opacity: 0.7, fontSize: 14, cursor: 'pointer', textDecoration: 'underline' }} onClick={() => setPrivacyOpen(true)} aria-label="Privacy Policy">Privacy Policy</button>
+            <button style={{ background: 'none', border: 'none', color: '#fff', opacity: 0.7, fontSize: 14, cursor: 'pointer', textDecoration: 'underline' }} onClick={() => setContactOpen(true)} aria-label="Contact">Contact</button>
           </div>
         </footer>
         <AboutModal open={aboutOpen} onClose={() => setAboutOpen(false)} />
         <PrivacyModal open={privacyOpen} onClose={() => setPrivacyOpen(false)} />
+        <ContactModal open={contactOpen} onClose={() => setContactOpen(false)} />
         <FloatingAppreciationButton />
       </div>
     </div>
