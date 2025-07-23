@@ -30,6 +30,8 @@ const App: React.FC = () => {
   useEffect(() => {
     initGA();
     trackPageView(window.location.pathname);
+    // Scroll to top on initial mount
+    window.scrollTo(0, 0);
   }, []);
 
   const ageRanges = [

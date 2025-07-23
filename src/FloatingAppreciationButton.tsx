@@ -62,43 +62,71 @@ const adContainerStyle: React.CSSProperties = {
   justifyContent: 'center',
 };
 
+function loadAdSenseScript(client: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    // Check for existing AdSense script by src
+    if (document.querySelector('script[src^="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"]')) {
+      resolve();
+      return;
+    }
+    const script = document.createElement('script');
+    script.async = true;
+    script.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${client}`;
+    script.crossOrigin = 'anonymous';
+    // No custom attribute
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error('Failed to load AdSense script'));
+    document.head.appendChild(script);
+  });
+}
+
 const FloatingAppreciationButton: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [adFailed, setAdFailed] = useState(false);
   const adRef = useRef<HTMLDivElement>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const ADSENSE_CLIENT = 'ca-pub-9644041666041710';
+  const ADSENSE_SLOT = '9237413880';
 
   useEffect(() => {
     if (showModal) {
       setAdFailed(false);
-      if (adRef.current) {
-        adRef.current.innerHTML = '';
-        const ins = document.createElement('ins');
-        ins.className = 'adsbygoogle';
-        ins.style.display = 'block';
-        ins.style.width = '320px';
-        ins.style.height = '100px';
-        ins.setAttribute('data-ad-client', 'ca-pub-9644041666041710');
-        ins.setAttribute('data-ad-slot', '9237413880');
-        adRef.current.appendChild(ins);
-        // Trigger AdSense
-        // @ts-ignore
-        if (window.adsbygoogle && Array.isArray(window.adsbygoogle)) {
-          // @ts-ignore
-          window.adsbygoogle.push({});
-        }
-      }
-      // Start timer to check if ad loads
-      timerRef.current = setTimeout(() => {
-        // If the ad container is still empty or ins has no children, consider it failed
-        if (adRef.current) {
-          const ins = adRef.current.querySelector('ins.adsbygoogle');
-          // If ins has no child nodes or is still empty
-          if (!ins || ins.childNodes.length === 0) {
-            setAdFailed(true);
+      loadAdSenseScript(ADSENSE_CLIENT)
+        .then(() => {
+          if (adRef.current) {
+            adRef.current.innerHTML = '';
+            const ins = document.createElement('ins');
+            ins.className = 'adsbygoogle';
+            ins.style.display = 'block';
+            ins.style.width = '320px';
+            ins.style.height = '100px';
+            ins.setAttribute('data-ad-client', ADSENSE_CLIENT);
+            ins.setAttribute('data-ad-slot', ADSENSE_SLOT);
+            adRef.current.appendChild(ins);
+            // Trigger AdSense
+            // @ts-ignore
+            if (window.adsbygoogle && Array.isArray(window.adsbygoogle)) {
+              // @ts-ignore
+              window.adsbygoogle.push({});
+            }
           }
-        }
-      }, 1500);
+          // Start timer to check if ad loads
+          timerRef.current = setTimeout(() => {
+            if (adRef.current) {
+              const ins = adRef.current.querySelector('ins.adsbygoogle');
+              if (!ins || ins.childNodes.length === 0) {
+                console.warn('AdSense: No fill (ad slot empty after timeout)');
+                setAdFailed(true);
+              } else {
+                console.log('AdSense: Ad successfully loaded (ad slot filled)');
+              }
+            }
+          }, 1500);
+        })
+        .catch((err) => {
+          console.error('Failed to load AdSense script:', err);
+          setAdFailed(true);
+        });
     }
     // Cleanup timer on close
     return () => {
