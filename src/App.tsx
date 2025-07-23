@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Send, Users, Clock, Heart, MapPin, Copy, ChevronDown, ChevronUp } from 'lucide-react';
 import './App.css';
 import { initGA, trackPageView, trackFormSubmission, trackCopyToClipboard } from './services/analytics';
+import FloatingAppreciationButton from './FloatingAppreciationButton';
 
 interface ChatGPTActivity {
   title: string;
@@ -328,6 +329,7 @@ Things to Avoid: ${activity.thingsToAvoid}`;
             This app provides general advice. Always supervise kids and ensure activities are safe for their age and abilities.
           </p>
         </footer>
+        <FloatingAppreciationButton />
       </div>
     </div>
   );
