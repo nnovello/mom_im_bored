@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import * as React from 'react';
+import { useState, useEffect } from 'react';
 import { Send, Users, Clock, Heart, MapPin, Copy, ChevronDown, ChevronUp } from 'lucide-react';
 import './App.css';
 import { initGA, trackPageView, trackFormSubmission, trackCopyToClipboard } from './services/analytics';
@@ -15,6 +16,23 @@ interface ChatGPTActivity {
   thingsToAvoid: string;
 }
 
+const AboutModal: React.FC<{ open: boolean; onClose: () => void }> = ({ open, onClose }) => {
+  if (!open) return null;
+  return (
+    <div className="about-modal-overlay">
+      <div className="about-modal-content">
+        <button onClick={onClose} aria-label="Close">×</button>
+        <h2>About Mom, I'm Bored!</h2>
+        <p><strong>Purpose:</strong> Mom, I'm Bored! is designed to help parents and caregivers quickly find creative, screen-free activities for kids in any situation. Our audience is parents, guardians, and anyone seeking wholesome, practical ways to keep children engaged without digital devices. We focus on safe, age-appropriate, and easy-to-implement ideas for a variety of everyday scenarios.</p>
+        <h3>Meta Description</h3>
+        <p>Discover screen-free activities for kids, tailored for parents and caregivers. Find creative, safe, and practical ideas to keep children entertained in any situation. Perfect for families seeking wholesome, device-free fun.</p>
+        <h3>Privacy Policy</h3>
+        <p>Your privacy is important to us. We do not collect any personally identifiable information from users. Third-party vendors, including Google, use cookies to serve ads based on your prior visits to this website or other websites. Google's use of advertising cookies enables it and its partners to serve ads to you based on your visit to this site and/or other sites on the Internet. You may opt out of personalized advertising by visiting <a href="https://www.aboutads.info/choices" target="_blank" rel="noopener noreferrer">Ad Settings</a>. For more information, see <a href="https://policies.google.com/technologies/ads" target="_blank" rel="noopener noreferrer">Google's Privacy Policy</a>. We do not knowingly collect information from children under 13. If you have questions about our privacy practices, please contact us.</p>
+      </div>
+    </div>
+  );
+};
+
 const App: React.FC = () => {
   const [selectedAge, setSelectedAge] = useState<string>('');
   const [selectedPlace, setSelectedPlace] = useState<string>('');
@@ -25,6 +43,7 @@ const App: React.FC = () => {
   const [isError, setIsError] = useState<boolean>(false);
   const [expandedActivities, setExpandedActivities] = useState<Set<number>>(new Set());
   const [copiedActivities, setCopiedActivities] = useState<Set<number>>(new Set());
+  const [aboutOpen, setAboutOpen] = useState(false);
 
   // Initialize Google Analytics on component mount
   useEffect(() => {
@@ -330,7 +349,9 @@ Things to Avoid: ${activity.thingsToAvoid}`;
           <p className="footer-note">
             This app provides general advice. Always supervise kids and ensure activities are safe for their age and abilities.
           </p>
+          <button style={{ background: 'none', border: 'none', color: '#fff', opacity: 0.7, fontSize: 14, cursor: 'pointer', textDecoration: 'underline', marginTop: 8 }} onClick={() => setAboutOpen(true)} aria-label="About this site">About</button>
         </footer>
+        <AboutModal open={aboutOpen} onClose={() => setAboutOpen(false)} />
         <FloatingAppreciationButton />
       </div>
     </div>
