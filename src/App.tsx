@@ -166,7 +166,7 @@ Things to Avoid: ${activity.thingsToAvoid}`;
         <div className="main-content">
           <div className="card">
             <p className="card-description">
-              Tell us about your kid and what the situation is, and I'll provide activities that keep your kids entertained without screens.
+              Tell me about your kid and what the situation is, and I'll provide activities that keep your kids entertained without screens.
             </p>
 
             <div className="form-section">
@@ -212,7 +212,7 @@ Things to Avoid: ${activity.thingsToAvoid}`;
               </label>
               <textarea
                 className="input textarea"
-                placeholder="Tell us about your kid... For example: 'My 5-year-old is bored at a restaurant and keeps asking for the tablet. He is fascinated by dinosaurs.' OR 'I need activities for my 8-year-old at the grocery store. She wants to be a musician when she grows up.'"
+                placeholder="Try: 'My 5-year-old is bored at a restaurant and keeps asking for the tablet. He is fascinated by dinosaurs.' OR 'I need activities for my 8-year-old at the grocery store. She wants to be a musician when she grows up.'"
                 value={situation}
                 onChange={handleSituationChange}
                 rows={6}
