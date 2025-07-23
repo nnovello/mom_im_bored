@@ -80,6 +80,12 @@ function loadAdSenseScript(client: string): Promise<void> {
   });
 }
 
+// Mobile detection helper
+function isMobileDevice() {
+  if (typeof navigator === 'undefined') return false;
+  return /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+
 const FloatingAppreciationButton: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [adFailed, setAdFailed] = useState(false);
@@ -137,9 +143,31 @@ const FloatingAppreciationButton: React.FC = () => {
     };
   }, [showModal]);
 
+  // Determine button style based on device
+  const mobile = isMobileDevice();
+  const floatingButtonStyle = mobile
+    ? {
+        position: 'fixed',
+        top: '8px',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        zIndex: 1000,
+        padding: '16px 24px',
+        backgroundColor: '#ffb347',
+        color: '#fff',
+        border: 'none',
+        borderRadius: '24px',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+        fontSize: '1.1rem',
+        fontWeight: 600,
+        cursor: 'pointer',
+        transition: 'background 0.2s',
+      } as React.CSSProperties
+    : buttonStyle;
+
   return (
     <>
-      <button style={buttonStyle} onClick={() => setShowModal(true)}>
+      <button style={floatingButtonStyle} onClick={() => setShowModal(true)}>
         I Appreciate You!
       </button>
       {showModal && (
