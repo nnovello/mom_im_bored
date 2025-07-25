@@ -283,6 +283,7 @@ Things to Avoid: ${activity.thingsToAvoid}`;
         <header className="header">
           <div className="header-content">
             <img src="/surfing.png" alt="Surfing" className="logo-image" />
+            <br />
             <div className="logo">
               <h1>Mom, I'm Bored!</h1>
             </div>
@@ -292,9 +293,10 @@ Things to Avoid: ${activity.thingsToAvoid}`;
 
         <div className="main-content">
           <div className="card">
+            {/* This paragraph explains to the user what information to provide for personalized activity suggestions 
             <p className="card-description">
               Tell me about your kid and what the situation is, and I'll provide activities that keep your kids entertained without screens.
-            </p>
+            </p> */}
 
             <div className="form-section">
               <label className="form-label">
