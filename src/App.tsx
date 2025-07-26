@@ -155,7 +155,7 @@ function TipForm({ onSuccess }: { onSuccess: () => void }) {
       if (!data.url) throw new Error(data.error || 'No checkout URL');
       
       // Redirect to Stripe Checkout
-      window.open(data.url, '_blank');
+      window.location.href = data.url;
       onSuccess();
     } catch (err: any) {
       setError(err.message || 'Payment error');
