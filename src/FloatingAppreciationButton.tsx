@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { TipForm } from './App';
 
 const buttonStyle: React.CSSProperties = {
   position: 'fixed',
@@ -54,32 +55,6 @@ const closeButtonStyle: React.CSSProperties = {
   color: '#333',
 };
 
-const adContainerStyle: React.CSSProperties = {
-  minWidth: '320px',
-  minHeight: '100px',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-};
-
-function loadAdSenseScript(client: string): Promise<void> {
-  return new Promise((resolve, reject) => {
-    // Check for existing AdSense script by src
-    if (document.querySelector('script[src^="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"]')) {
-      resolve();
-      return;
-    }
-    const script = document.createElement('script');
-    script.async = true;
-    script.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${client}`;
-    script.crossOrigin = 'anonymous';
-    // No custom attribute
-    script.onload = () => resolve();
-    script.onerror = () => reject(new Error('Failed to load AdSense script'));
-    document.head.appendChild(script);
-  });
-}
-
 // Mobile detection helper
 function isMobileDevice() {
   if (typeof navigator === 'undefined') return false;
@@ -88,60 +63,9 @@ function isMobileDevice() {
 
 const FloatingAppreciationButton: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
-  const [adFailed, setAdFailed] = useState(false);
-  const adRef = useRef<HTMLDivElement>(null);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
-  const ADSENSE_CLIENT = 'ca-pub-9644041666041710';
-  const ADSENSE_SLOT = '9237413880';
+  // Removed adFailed, adRef, timerRef, ADSENSE_CLIENT, ADSENSE_SLOT
 
-  useEffect(() => {
-    if (showModal) {
-      setAdFailed(false);
-      loadAdSenseScript(ADSENSE_CLIENT)
-        .then(() => {
-          if (adRef.current) {
-            adRef.current.innerHTML = '';
-            const ins = document.createElement('ins');
-            ins.className = 'adsbygoogle';
-            ins.style.display = 'block';
-            ins.style.width = '320px';
-            ins.style.height = '100px';
-            ins.setAttribute('data-ad-client', ADSENSE_CLIENT);
-            ins.setAttribute('data-ad-slot', ADSENSE_SLOT);
-            adRef.current.appendChild(ins);
-            // Trigger AdSense
-            // @ts-ignore
-            if (window.adsbygoogle && Array.isArray(window.adsbygoogle)) {
-              // @ts-ignore
-              window.adsbygoogle.push({});
-            }
-          }
-          // Start timer to check if ad loads
-          timerRef.current = setTimeout(() => {
-            if (adRef.current) {
-              const ins = adRef.current.querySelector('ins.adsbygoogle');
-              if (!ins || ins.childNodes.length === 0) {
-                console.warn('AdSense: No fill (ad slot empty after timeout)');
-                setAdFailed(true);
-              } else {
-                console.log('AdSense: Ad successfully loaded (ad slot filled)');
-              }
-            }
-          }, 1500);
-        })
-        .catch((err) => {
-          console.error('Failed to load AdSense script:', err);
-          setAdFailed(true);
-        });
-    }
-    // Cleanup timer on close
-    return () => {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-        timerRef.current = null;
-      }
-    };
-  }, [showModal]);
+  // Removed useEffect for AdSense
 
   // Determine button style based on device
   const mobile = isMobileDevice();
@@ -174,12 +98,9 @@ const FloatingAppreciationButton: React.FC = () => {
         <div style={modalOverlayStyle}>
           <div style={modalContentStyle}>
             <button style={closeButtonStyle} onClick={() => setShowModal(false)} aria-label="Close modal">×</button>
-            {adFailed ? (
-              <img src="/wipeout.png" alt="Ad failed to load" style={{ width: 320, height: 100, objectFit: 'contain', borderRadius: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }} />
-            ) : (
-              <div style={adContainerStyle} ref={adRef} />
-            )}
-            <p style={{ marginTop: 24, color: '#888', fontSize: '0.95rem' }}>Thank you for supporting us!</p>
+            {/* Removed AdSense and wipeout.png logic */}
+            <p style={{ marginTop: 24, color: '#888', fontSize: '1.05rem' }}>I Appreciate Your Support!</p>
+            <TipForm onSuccess={() => {/* Optionally close modal or show a thank you */}} />
           </div>
         </div>
       )}

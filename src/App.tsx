@@ -4,6 +4,8 @@ import { Send, Users, Clock, Heart, MapPin, Copy, ChevronDown, ChevronUp } from 
 import './App.css';
 import { initGA, trackPageView, trackFormSubmission, trackCopyToClipboard } from './services/analytics';
 import FloatingAppreciationButton from './FloatingAppreciationButton';
+import AdSenseAd from './AdSenseAd';
+
 
 interface ChatGPTActivity {
   title: string;
@@ -136,6 +138,64 @@ const ContactModal: React.FC<{ open: boolean; onClose: () => void }> = ({ open, 
   );
 };
 
+function TipForm({ onSuccess }: { onSuccess: () => void }) {
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
+
+  const handleTip = async (amount: number) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount }),
+      });
+      const data = await res.json();
+      if (!data.url) throw new Error(data.error || 'No checkout URL');
+      
+      // Redirect to Stripe Checkout
+      window.open(data.url, '_blank');
+      onSuccess();
+    } catch (err: any) {
+      setError(err.message || 'Payment error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div style={{ marginTop: 16 }}>
+      <div style={{ display: 'flex', gap: 8, marginBottom: 12, justifyContent: 'center' }}>
+        {[300, 500, 1000].map((amt) => (
+          <button 
+            key={amt} 
+            onClick={() => handleTip(amt)} 
+            disabled={loading}
+            style={{
+              background: '#ffb347',
+              color: '#fff',
+              border: 'none',
+              borderRadius: 8,
+              padding: '12px 20px',
+              cursor: loading ? 'not-allowed' : 'pointer',
+              fontWeight: 600,
+              fontSize: '1rem',
+              opacity: loading ? 0.6 : 1
+            }}
+          >
+            {loading ? 'Processing...' : `Tip $${amt / 100}`}
+          </button>
+        ))}
+      </div>
+      {error && <div style={{ color: 'red', marginTop: 8 }}>{error}</div>}
+      <div style={{ marginTop: 10, textAlign: 'center' }}>
+        <img src="/stripe_secure_badge.png" alt="Secured with Stripe Payments" style={{ width: '320px', maxWidth: '100%', height: 'auto', display: 'inline-block' }} />
+      </div>
+    </div>
+  );
+}
+
 const App: React.FC = () => {
   const [selectedAge, setSelectedAge] = useState<string>('');
   const [selectedPlace, setSelectedPlace] = useState<string>('');
@@ -156,6 +216,16 @@ const App: React.FC = () => {
     trackPageView(window.location.pathname);
     // Scroll to top on initial mount
     window.scrollTo(0, 0);
+    
+    // Check for Stripe Checkout success/cancel parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('success') === 'true') {
+      // Show success message (you could add a toast notification here)
+      console.log('Payment successful!');
+    } else if (urlParams.get('canceled') === 'true') {
+      // Show cancel message (you could add a toast notification here)
+      console.log('Payment canceled.');
+    }
   }, []);
 
   const ageRanges = [
@@ -450,7 +520,7 @@ Things to Avoid: ${activity.thingsToAvoid}`;
             </div>
           )}
         </div>
-
+        <AdSenseAd />
         <footer className="footer">
           <p>Made with ❤️ for parents everywhere</p>
           <p className="footer-note">
@@ -468,7 +538,9 @@ Things to Avoid: ${activity.thingsToAvoid}`;
         <FloatingAppreciationButton />
       </div>
     </div>
-  );
+  ); 
+  
 };
 
+export { TipForm };
 export default App; 

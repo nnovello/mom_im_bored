@@ -6,7 +6,6 @@ export const initGA = () => {
   
   if (trackingId) {
     ReactGA.initialize(trackingId);
-    console.log('Google Analytics initialized with tracking ID:', trackingId);
   } else {
     console.warn('Google Analytics tracking ID not found. Please set REACT_APP_GA_TRACKING_ID in your environment variables.');
   }

@@ -5,11 +5,15 @@ import cors from 'cors';
 import winston from 'winston';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import stripePkg from 'stripe';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 dotenv.config();
+//check .env for dev build
+//console.log('Loaded STRIPE_SECRET_KEY:', process.env.STRIPE_SECRET_KEY);
+//console.log('Loaded OPENAI_API_KEY:', process.env.OPENAI_API_KEY);
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -88,6 +92,71 @@ app.post('/api/chatgpt', async (req, res) => {
     res.status(500).json({
       error: error.message
     });
+  }
+});
+
+// Endpoint to create a Stripe Checkout session for tips
+app.post('/api/create-checkout-session', async (req, res) => {
+  logger.info('--- Incoming POST /api/create-checkout-session ---');
+  logger.info('Headers: ' + JSON.stringify(req.headers));
+  logger.info('Body: ' + JSON.stringify(req.body));
+  console.log('--- Incoming POST /api/create-checkout-session ---');
+  console.log('Headers:', req.headers);
+  console.log('Body:', req.body);
+  try {
+    const { amount } = req.body;
+    logger.info('Received amount: ' + amount);
+    logger.info('STRIPE_SECRET_KEY present: ' + (process.env.STRIPE_SECRET_KEY ? 'yes' : 'no'));
+    console.log('Received amount:', amount);
+    console.log('STRIPE_SECRET_KEY present:', process.env.STRIPE_SECRET_KEY ? 'yes' : 'no');
+    if (!amount || typeof amount !== 'number' || amount < 100) {
+      logger.error('Invalid tip amount (minimum $1)');
+      console.error('Invalid tip amount (minimum $1)');
+      return res.status(400).json({ error: 'Invalid tip amount (minimum $1)' });
+    }
+    if (!process.env.STRIPE_SECRET_KEY) {
+      logger.error('STRIPE_SECRET_KEY is missing from environment variables');
+      console.error('STRIPE_SECRET_KEY is missing from environment variables');
+      return res.status(500).json({ error: 'Stripe secret key not configured on server.' });
+    }
+    const stripe = stripePkg(process.env.STRIPE_SECRET_KEY);
+    let session;
+    try {
+      session = await stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        line_items: [
+          {
+            price_data: {
+              currency: 'usd',
+              product_data: {
+                name: "Tip for Mom, I'm Bored!",
+                description: 'Thank you for supporting our app!',
+              },
+              unit_amount: amount,
+            },
+            quantity: 1,
+          },
+        ],
+        mode: 'payment',
+        success_url: `${req.headers.origin || 'http://localhost:3000'}/?success=true`,
+        cancel_url: `${req.headers.origin || 'http://localhost:3000'}/?canceled=true`,
+      });
+      logger.info('Stripe Checkout session created: ' + JSON.stringify(session));
+      console.log('Stripe Checkout session created:', session);
+    } catch (stripeErr) {
+      logger.error('Stripe API error: ' + (stripeErr && stripeErr.message ? stripeErr.message : stripeErr));
+      logger.error('Stripe API error (full): ' + JSON.stringify(stripeErr));
+      console.error('Stripe API error:', stripeErr && stripeErr.message ? stripeErr.message : stripeErr);
+      console.error('Stripe API error (full):', stripeErr);
+      throw stripeErr;
+    }
+    res.json({ url: session.url });
+  } catch (error) {
+    logger.error('Stripe Checkout session error: ' + (error && error.message ? error.message : error));
+    logger.error('Stripe Checkout session error (full): ' + JSON.stringify(error));
+    console.error('Stripe Checkout session error:', error && error.message ? error.message : error);
+    console.error('Stripe Checkout session error (full):', error);
+    res.status(500).json({ error: 'Failed to create checkout session' });
   }
 });
 
