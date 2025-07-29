@@ -6,6 +6,13 @@ import { initGA, trackPageView, trackFormSubmission, trackCopyToClipboard } from
 import FloatingAppreciationButton from './FloatingAppreciationButton';
 // import AdSenseAd from './AdSenseAd';
 
+// Facebook Pixel TypeScript declaration
+declare global {
+  interface Window {
+    fbq: any;
+  }
+}
+
 
 interface ChatGPTActivity {
   title: string;
@@ -253,6 +260,16 @@ const App: React.FC = () => {
 
     // Track form submission
     trackFormSubmission(selectedAge, selectedPlace, !!situation);
+    
+    // Track Facebook pixel event for Get Activity Advice button click
+    if (window.fbq) {
+      window.fbq('track', 'ViewContent', {
+        content_name: 'Get Activity Advice',
+        content_category: 'Activity Request',
+        value: 1,
+        currency: 'USD'
+      });
+    }
 
     try {
       // Import the service dynamically to avoid build issues
