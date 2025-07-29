@@ -4,7 +4,7 @@ import { Send, Users, Clock, Heart, MapPin, Copy, ChevronDown, ChevronUp } from 
 import './App.css';
 import { initGA, trackPageView, trackFormSubmission, trackCopyToClipboard } from './services/analytics';
 import FloatingAppreciationButton from './FloatingAppreciationButton';
-import AdSenseAd from './AdSenseAd';
+// import AdSenseAd from './AdSenseAd';
 
 
 interface ChatGPTActivity {
@@ -520,7 +520,7 @@ Things to Avoid: ${activity.thingsToAvoid}`;
             </div>
           )}
         </div>
-        <AdSenseAd />
+        {/* <AdSenseAd /> */}
         <footer className="footer">
           <p>Made with ❤️ for parents everywhere</p>
           <p className="footer-note">
