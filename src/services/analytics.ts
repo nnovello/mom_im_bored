@@ -11,9 +11,46 @@ export const initGA = () => {
   }
 };
 
+// Facebook Pixel tracking functions
+export const trackFacebookEvent = (eventName: string, parameters?: any) => {
+  if (typeof window !== 'undefined' && window.fbq) {
+    window.fbq('track', eventName, parameters);
+  }
+};
+
+export const trackFacebookPageView = () => {
+  trackFacebookEvent('PageView');
+};
+
+export const trackFacebookViewContent = (contentName: string, contentCategory?: string) => {
+  trackFacebookEvent('ViewContent', {
+    content_name: contentName,
+    content_category: contentCategory,
+    value: 1,
+    currency: 'USD'
+  });
+};
+
+export const trackFacebookLead = (contentName: string) => {
+  trackFacebookEvent('Lead', {
+    content_name: contentName,
+    value: 1,
+    currency: 'USD'
+  });
+};
+
+export const trackFacebookCompleteRegistration = (contentName: string) => {
+  trackFacebookEvent('CompleteRegistration', {
+    content_name: contentName,
+    value: 1,
+    currency: 'USD'
+  });
+};
+
 // Track page views
 export const trackPageView = (path: string) => {
   ReactGA.send({ hitType: "pageview", page: path });
+  trackFacebookPageView();
 };
 
 // Track custom events
@@ -29,6 +66,9 @@ export const trackEvent = (action: string, category: string, label?: string, val
 // Track form submissions
 export const trackFormSubmission = (ageRange: string, placeType: string, hasSituation: boolean) => {
   trackEvent('form_submit', 'engagement', 'activity_request', 1);
+  
+  // Facebook Pixel tracking for form submission
+  trackFacebookCompleteRegistration('Activity Request Form');
   
   // Track form fields
   if (ageRange) {
@@ -50,4 +90,10 @@ export const trackActivityInteraction = (action: string, activityTitle: string) 
 // Track copy to clipboard
 export const trackCopyToClipboard = () => {
   trackEvent('copy_activities', 'engagement', 'clipboard_copy');
+  trackFacebookEvent('ViewContent', {
+    content_name: 'Copy Activity to Clipboard',
+    content_category: 'Activity Interaction',
+    value: 1,
+    currency: 'USD'
+  });
 }; 

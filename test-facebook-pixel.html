@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facebook Pixel Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        button { padding: 10px 20px; margin: 10px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .log { background: #f8f9fa; padding: 10px; margin: 10px 0; border-radius: 5px; font-family: monospace; }
+    </style>
+</head>
+<body>
+    <h1>Facebook Pixel Test Page</h1>
+    <p>This page tests various Facebook Pixel events to help activate your dataset.</p>
+    
+    <button onclick="testPageView()">Test PageView</button>
+    <button onclick="testViewContent()">Test ViewContent</button>
+    <button onclick="testLead()">Test Lead</button>
+    <button onclick="testCompleteRegistration()">Test CompleteRegistration</button>
+    <button onclick="testInitiateCheckout()">Test InitiateCheckout</button>
+    
+    <div id="log" class="log"></div>
+
+    <!-- Facebook Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1817831332136700');
+    fbq('track', 'PageView');
+    </script>
+    <noscript>
+    <img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1817831332136700&ev=PageView&noscript=1"/>
+    </noscript>
+    <!-- End Facebook Pixel Code -->
+
+    <script>
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.innerHTML += `[${timestamp}] ${message}<br>`;
+        }
+
+        function testPageView() {
+            fbq('track', 'PageView');
+            log('PageView event sent');
+        }
+
+        function testViewContent() {
+            fbq('track', 'ViewContent', {
+                content_name: 'Test Content',
+                content_category: 'Test',
+                value: 1,
+                currency: 'USD'
+            });
+            log('ViewContent event sent');
+        }
+
+        function testLead() {
+            fbq('track', 'Lead', {
+                content_name: 'Test Lead',
+                content_category: 'Test',
+                value: 1,
+                currency: 'USD'
+            });
+            log('Lead event sent');
+        }
+
+        function testCompleteRegistration() {
+            fbq('track', 'CompleteRegistration', {
+                content_name: 'Test Registration',
+                content_category: 'Test',
+                value: 1,
+                currency: 'USD'
+            });
+            log('CompleteRegistration event sent');
+        }
+
+        function testInitiateCheckout() {
+            fbq('track', 'InitiateCheckout', {
+                content_name: 'Test Checkout',
+                content_category: 'Test',
+                value: 10,
+                currency: 'USD'
+            });
+            log('InitiateCheckout event sent');
+        }
+
+        // Log when page loads
+        window.addEventListener('load', function() {
+            log('Page loaded - Facebook Pixel should be active');
+            log('Check browser console for Facebook Pixel debug messages');
+        });
+    </script>
+</body>
+</html> 

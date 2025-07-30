@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { Send, Users, Clock, Heart, MapPin, Copy, ChevronDown, ChevronUp } from 'lucide-react';
 import './App.css';
-import { initGA, trackPageView, trackFormSubmission, trackCopyToClipboard } from './services/analytics';
+import { initGA, trackPageView, trackFormSubmission, trackCopyToClipboard, trackFacebookViewContent, trackFacebookEvent } from './services/analytics';
 import FloatingAppreciationButton from './FloatingAppreciationButton';
 // import AdSenseAd from './AdSenseAd';
 
@@ -152,6 +152,15 @@ function TipForm({ onSuccess }: { onSuccess: () => void }) {
   const handleTip = async (amount: number) => {
     setLoading(true);
     setError(null);
+    
+    // Track tip button click with Facebook Pixel
+    trackFacebookEvent('InitiateCheckout', {
+      content_name: `Tip $${amount / 100}`,
+      content_category: 'Donation',
+      value: amount / 100,
+      currency: 'USD'
+    });
+    
     try {
       const res = await fetch('/api/create-checkout-session', {
         method: 'POST',
@@ -224,6 +233,14 @@ const App: React.FC = () => {
     // Scroll to top on initial mount
     window.scrollTo(0, 0);
     
+    // Track initial page load as Lead event for Facebook Pixel
+    trackFacebookEvent('Lead', {
+      content_name: 'Page Load',
+      content_category: 'Initial Visit',
+      value: 1,
+      currency: 'USD'
+    });
+    
     // Check for Stripe Checkout success/cancel parameters
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('success') === 'true') {
@@ -262,14 +279,7 @@ const App: React.FC = () => {
     trackFormSubmission(selectedAge, selectedPlace, !!situation);
     
     // Track Facebook pixel event for Get Activity Advice button click
-    if (window.fbq) {
-      window.fbq('track', 'ViewContent', {
-        content_name: 'Get Activity Advice',
-        content_category: 'Activity Request',
-        value: 1,
-        currency: 'USD'
-      });
-    }
+    trackFacebookViewContent('Get Activity Advice', 'Activity Request');
 
     try {
       // Import the service dynamically to avoid build issues
@@ -302,17 +312,47 @@ const App: React.FC = () => {
     const newAge = selectedAge === age ? '' : age;
     setSelectedAge(newAge);
     clearResponse();
+    
+    // Track age selection with Facebook Pixel
+    if (newAge) {
+      trackFacebookEvent('ViewContent', {
+        content_name: `Age Selected: ${age}`,
+        content_category: 'Form Interaction',
+        value: 1,
+        currency: 'USD'
+      });
+    }
   };
 
   const handlePlaceChange = (place: string) => {
     const newPlace = selectedPlace === place ? '' : place;
     setSelectedPlace(newPlace);
     clearResponse();
+    
+    // Track place selection with Facebook Pixel
+    if (newPlace) {
+      trackFacebookEvent('ViewContent', {
+        content_name: `Place Selected: ${place}`,
+        content_category: 'Form Interaction',
+        value: 1,
+        currency: 'USD'
+      });
+    }
   };
 
   const handleSituationChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setSituation(e.target.value);
     clearResponse();
+    
+    // Track situation input with Facebook Pixel (only when user starts typing)
+    if (e.target.value.length === 1) {
+      trackFacebookEvent('ViewContent', {
+        content_name: 'Situation Description Started',
+        content_category: 'Form Interaction',
+        value: 1,
+        currency: 'USD'
+      });
+    }
   };
 
   const copyActivityToClipboard = async (activity: ChatGPTActivity, index: number) => {
@@ -358,6 +398,13 @@ Things to Avoid: ${activity.thingsToAvoid}`;
       newExpanded.delete(index);
     } else {
       newExpanded.add(index);
+      // Track activity expansion with Facebook Pixel
+      trackFacebookEvent('ViewContent', {
+        content_name: `Activity Expanded: ${activities[index]?.title || 'Unknown'}`,
+        content_category: 'Activity Interaction',
+        value: 1,
+        currency: 'USD'
+      });
     }
     setExpandedActivities(newExpanded);
   };
@@ -544,9 +591,33 @@ Things to Avoid: ${activity.thingsToAvoid}`;
             This app provides general advice. Always supervise kids and ensure activities are safe for their age and abilities.
           </p>
           <div style={{ display: 'flex', gap: 12, marginTop: 8 }}>
-            <button style={{ background: 'none', border: 'none', color: '#fff', opacity: 0.7, fontSize: 14, cursor: 'pointer', textDecoration: 'underline' }} onClick={() => setAboutOpen(true)} aria-label="About this site">About</button>
-            <button style={{ background: 'none', border: 'none', color: '#fff', opacity: 0.7, fontSize: 14, cursor: 'pointer', textDecoration: 'underline' }} onClick={() => setPrivacyOpen(true)} aria-label="Privacy Policy">Privacy Policy</button>
-            <button style={{ background: 'none', border: 'none', color: '#fff', opacity: 0.7, fontSize: 14, cursor: 'pointer', textDecoration: 'underline' }} onClick={() => setContactOpen(true)} aria-label="Contact">Contact</button>
+            <button style={{ background: 'none', border: 'none', color: '#fff', opacity: 0.7, fontSize: 14, cursor: 'pointer', textDecoration: 'underline' }} onClick={() => {
+              setAboutOpen(true);
+              trackFacebookEvent('ViewContent', {
+                content_name: 'About Page',
+                content_category: 'Navigation',
+                value: 1,
+                currency: 'USD'
+              });
+            }} aria-label="About this site">About</button>
+            <button style={{ background: 'none', border: 'none', color: '#fff', opacity: 0.7, fontSize: 14, cursor: 'pointer', textDecoration: 'underline' }} onClick={() => {
+              setPrivacyOpen(true);
+              trackFacebookEvent('ViewContent', {
+                content_name: 'Privacy Policy',
+                content_category: 'Navigation',
+                value: 1,
+                currency: 'USD'
+              });
+            }} aria-label="Privacy Policy">Privacy Policy</button>
+            <button style={{ background: 'none', border: 'none', color: '#fff', opacity: 0.7, fontSize: 14, cursor: 'pointer', textDecoration: 'underline' }} onClick={() => {
+              setContactOpen(true);
+              trackFacebookEvent('ViewContent', {
+                content_name: 'Contact Page',
+                content_category: 'Navigation',
+                value: 1,
+                currency: 'USD'
+              });
+            }} aria-label="Contact">Contact</button>
           </div>
         </footer>
         <AboutModal open={aboutOpen} onClose={() => setAboutOpen(false)} />
