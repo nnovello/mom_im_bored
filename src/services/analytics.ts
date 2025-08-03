@@ -67,9 +67,6 @@ export const trackEvent = (action: string, category: string, label?: string, val
 export const trackFormSubmission = (ageRange: string, placeType: string, hasSituation: boolean) => {
   trackEvent('form_submit', 'engagement', 'activity_request', 1);
   
-  // Facebook Pixel tracking for form submission
-  trackFacebookCompleteRegistration('Activity Request Form');
-  
   // Track form fields
   if (ageRange) {
     trackEvent('age_selected', 'form_field', ageRange);
@@ -90,10 +87,4 @@ export const trackActivityInteraction = (action: string, activityTitle: string) 
 // Track copy to clipboard
 export const trackCopyToClipboard = () => {
   trackEvent('copy_activities', 'engagement', 'clipboard_copy');
-  trackFacebookEvent('ViewContent', {
-    content_name: 'Copy Activity to Clipboard',
-    content_category: 'Activity Interaction',
-    value: 1,
-    currency: 'USD'
-  });
 }; 

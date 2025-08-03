@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { TipForm } from './App';
+import { trackFacebookEvent } from './services/analytics';
 
 const buttonStyle: React.CSSProperties = {
   position: 'fixed',
@@ -91,7 +92,16 @@ const FloatingAppreciationButton: React.FC = () => {
 
   return (
     <>
-      <button style={floatingButtonStyle} onClick={() => setShowModal(true)}>
+      <button style={floatingButtonStyle} onClick={() => {
+        setShowModal(true);
+        // Track Lead event when user clicks "I Appreciate You" button
+        trackFacebookEvent('Lead', {
+          content_name: 'I Appreciate You Button',
+          content_category: 'Appreciation',
+          value: 1,
+          currency: 'USD'
+        });
+      }}>
         I Appreciate You!
       </button>
       {showModal && (
